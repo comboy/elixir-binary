@@ -3,11 +3,17 @@ defmodule Binary.Mixfile do
 
   def project do
     [app: :binary,
-     version: "0.1.0",
+     version: "0.0.1",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     description: description(),
+     deps: deps(),
+     package: package(),
+     docs: [main: "Binary", # The main page in the docs
+            extras: ["README.md"]],
+     name: "Binary",
+     source_url: "https://github.com/comboy/elixir-binary"]
   end
 
   # Configuration for the OTP application
@@ -15,7 +21,7 @@ defmodule Binary.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    []
   end
 
   # Dependencies can be Hex packages:
@@ -28,6 +34,24 @@ defmodule Binary.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:ex_doc, "~> 0.14", only: :dev}]
+  end
+
+
+  defp description do
+    """
+    Toolkit for handling binaries in Elixir.
+    """
+  end
+
+  defp package do
+    # These are the default files included in the package
+    [
+      name: :binary,
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
+      maintainers: ["comboy"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/comboy/elixir-binary"}
+    ]
   end
 end

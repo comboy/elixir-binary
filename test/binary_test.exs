@@ -43,4 +43,58 @@ defmodule BinaryTest do
       copy("boo", -1)
     end)
   end
+
+  test "reverse" do
+    assert reverse(<<>>) == <<>>
+    assert reverse(<<1, 2, 3>>) == <<3, 2, 1>>
+    assert reverse(<<1>>) == <<1>>
+  end
+
+  test "at" do
+    assert <<1, 2, 3>> |> at(0) == 1
+    assert <<1, 2, 3>> |> at(2) == 3
+    assert <<1, 2, 3>> |> at(4) == nil
+    assert        <<>> |> at(0) == nil
+    assert       <<1>> |> at(-1) == 1
+    assert <<1, 2, 3>> |> at(-1) == 3
+    assert <<1, 2, 3>> |> at(-2) == 2
+    assert <<1, 2, 3>> |> at(-3) == 1
+    assert <<1, 2, 3>> |> at(-4) == nil
+  end
+
+  test "split_at" do
+    assert <<1, 2, 3>> |> split_at(1) == {<<1>>, <<2, 3>>}
+    assert <<1, 2, 3>> |> split_at(0) == {<<>>, <<1, 2, 3>>}
+    assert <<1, 2, 3>> |> split_at(3) == {<<1, 2, 3>>, <<>>}
+    assert <<1, 2, 3>> |> split_at(-1) == {<<1, 2>>, <<3>>}
+  end
+
+  test "trim_trailing" do
+    assert <<1, 2, 0, 0, 0>> |> trim_trailing == <<1, 2>>
+    assert <<1, 2, 0, 0, 0>> |> trim_trailing(0) == <<1, 2>>
+    assert <<1, 2, 0, 0, 0>> |> trim_trailing(1) == <<1, 2, 0, 0, 0>>
+    assert <<7, 7, 1, 2, 7>> |> trim_trailing(7) == <<7, 7, 1, 2>>
+    assert <<>> |> trim_trailing(7) == <<>>
+  end
+
+  test "pad_trailing" do
+    assert <<1>> |> pad_trailing(3) == <<1, 0, 0>>
+    assert <<1, 2>> |> pad_trailing(3, 7) == <<1, 2, 7>>
+    assert <<1, 2, 3>> |> pad_trailing(3, 7) == <<1, 2, 3>>
+    assert <<1, 2, 3>> |> pad_trailing(2, 7) == <<1, 2, 3>>
+    assert <<>> |> pad_trailing(2) == <<0, 0>>
+  end
+
+  test "trim_lleading" do
+    assert <<0, 1, 0, 0>> |> trim_leading == <<1, 0, 0>>
+    assert <<>> |> trim_leading == <<>>
+    assert <<1, 1, 2>> |> trim_leading(1) == <<2>>
+  end
+
+  test "pad leading" do
+    assert <<1, 2>> |> pad_leading(4) == <<0, 0, 1, 2>>
+    assert <<1, 2>> |> pad_leading(1) == <<1, 2>>
+    assert <<>> |> pad_leading(1) == <<0>>
+  end
+
 end

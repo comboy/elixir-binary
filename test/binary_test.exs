@@ -134,4 +134,17 @@ defmodule BinaryTest do
     assert 258 |> from_integer(:little) == <<2, 1>>
   end
 
+  test "to_hex" do
+    assert <<>> |> to_hex == ""
+    assert <<1>> |> to_hex == "01"
+    assert <<255, 1>> |> to_hex == "ff01"
+  end
+
+  test "from_hex" do
+    assert "BEEF" |> from_hex == <<190, 239>>
+    assert "beef" |> from_hex == <<190, 239>>
+    assert "bEEf" |> from_hex == <<190, 239>>
+    assert "" |> from_hex == <<>>
+  end
+
 end

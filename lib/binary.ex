@@ -174,7 +174,7 @@ defmodule Binary do
   end
 
   @doc """
-  Replace binary pattern inside the binnary with the replacement.
+  Replace binary pattern inside the binary with the replacement.
 
   For readability examples are presented on strings, but do note we are operating on bytes, not codepoints.
 
@@ -223,7 +223,7 @@ defmodule Binary do
   Exctracts part of the binarty starting at given position with given length.
 
   Based on `Kernel.binary_part/3`, but:
- 
+
   * it also accepts negative position, interpreting it as position relative to the end of the binary.
   * length is allowed to be outside binary size i.e. it is max number of fetched bytes
 
@@ -298,4 +298,35 @@ defmodule Binary do
     :binary.encode_unsigned(int, endianness)
   end
 
+  @doc """
+  Returns hex representation of the provided binary.
+
+      iex> <<190,239>> |> Binary.to_hex
+      "beef"
+
+  Just a shorthand for:
+
+      Base.encode16(binary, case: :lower)
+  """
+  @spec to_hex(binary) :: binary
+  def to_hex(binary) when is_binary(binary) do
+    binary |> Base.encode16(case: :lower)
+  end
+
+  @doc """
+  Returns binary from the hex representation.
+
+      iex> "ff01" |> Binary.from_hex
+      <<255, 1>>
+
+  Just a shorthand for:
+
+      Base.decode16!(binary, case: :mixed)
+  """
+  @spec from_hex(binary) :: binary
+  # Before API is frozen, maybe it should return {:ok, and have a bang version.
+  # Although if somebody cares about that, she can use Base.decode16 and this is meant to be short.
+  def from_hex(binary) when is_binary(binary) do
+    binary |> Base.decode16!(case: :mixed)
+  end
 end

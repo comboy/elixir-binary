@@ -1,4 +1,4 @@
-# Binary
+# Elixir Binary
 
 Small library for handling binaries in Elixir. It's a wrapper around erlang :binary, plus a few String-alike functions.
 
@@ -16,13 +16,14 @@ Add dependency in your mix.exs:
 
 ```elixir
 def deps do
-  [{:binary, "~> 0.0.2"}]
+  [{:binary, "~> 0.0.3"}]
 end
 ```
 
 Enjoy:
 ```elixir
-iex> [1, 2] |> Binary.from_list |> Binary.pad_trailing(4) |> Binary.reverse |> Binary.split_at(-1)
+iex< import Binary
+iex> [1, 2] |> from_list |> pad_trailing(4) |> reverse |> split_at(-1)
 {<<0, 0, 2>>,  <<1>>}
 ```
 

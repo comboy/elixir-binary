@@ -173,5 +173,129 @@ defmodule Binary do
     (<< byte >> |> copy(len - byte_size(binary))) <> binary
   end
 
+  @doc """
+  Replace binary pattern inside the binnary with the replacement.
+
+  For readability examples are presented on strings, but do note we are operating on bytes, not codepoints.
+
+      iex> "a-b-c" |> Binary.replace("-", "..")
+      "a..b..c"
+
+  By default it replaces all occurrences. If you only want to replace the first occurence,
+
+      iex> "a-b-c" |> Binary.replace("-", "..", global: false)
+      "a..b-c"
+  """
+  @spec replace(binary, binary, binary, Keyword.t) :: binary
+  def replace(binary, pattern, replacement, opts \\ []) when is_binary(binary) and is_binary(pattern) and is_binary(replacement) do
+    # We default to global replacement following Elixir.String as opposed to erlang :binary.replace
+    erl_opts = case opts[:global] do
+      false -> []
+          _ -> [:global]
+    end
+    :binary.replace(binary, pattern, replacement, erl_opts)
+  end
+
+  @doc """
+  Returns the length of the longest common prefix in the provided list of binaries.
+
+  Uses `:binary.longest_common_prefix/1`
+
+      iex> ["moo", "monad", "mojo"] |> Binary.longest_common_prefix
+      2
+  """
+  @spec longest_common_prefix([binary]) :: non_neg_integer
+  def longest_common_prefix(binaries) when is_list(binaries) do
+    :binary.longest_common_prefix(binaries)
+  end
+
+  @doc """
+  Returns the length of the longest common prefix in the provided list of binaries
+
+  Uses `:binary.longest_common_suffix/1`
+  """
+  @spec longest_common_suffix([binary]) :: non_neg_integer
+  def longest_common_suffix(binaries) when is_list(binaries) do
+    :binary.longest_common_suffix(binaries)
+  end
+
+  @doc """
+  Exctracts part of the binarty starting at given position with given length.
+
+  Based on `Kernel.binary_part/3`, but:
+ 
+  * it also accepts negative position, interpreting it as position relative to the end of the binary.
+  * length is allowed to be outside binary size i.e. it is max number of fetched bytes
+
+  ## Examples
+
+      iex> x = <<1, 2, 3, 4, 5>>
+      <<1, 2, 3, 4, 5>>
+      iex> x |> Binary.part(1, 2)
+      <<2, 3>>
+      iex> x |> Binary.part(-2, 1)
+      <<4>>
+      iex> x |> Binary.part(-2, -1)
+      <<3>>
+      iex> x |> Binary.part(-1, 10)
+      <<5>>
+
+  """
+  def part(binary, position, len)
+
+  # Allow negative position
+  def part(binary, position, len) when is_binary(binary) and is_integer(position) and is_integer(len) and position < 0 do
+    part(binary, byte_size(binary) + position, len)
+  end
+
+  # length goes outside the binary, which would raise ArgumentError in Kernel.binary_part/3
+  def part(binary, position, len) when is_binary(binary) and is_integer(position) and is_integer(len) and (position + len > byte_size(binary)) do
+    part(binary, position, byte_size(binary) - position)
+  end
+
+  # length is negative and goes outside binary
+  def part(binary, position, len) when is_binary(binary) and is_integer(position) and is_integer(len) and len < 0 and (position + len < 0) do
+    part(binary, position, -1 * position)
+  end
+
+  def part(binary, position, len) when is_binary(binary) and is_integer(position) and is_integer(len) do
+    Kernel.binary_part(binary, position, len)
+  end
+
+  @doc """
+  Interpret binary as an unsigned integer representation. Second option decides endianness which defaults to `:big`.
+
+  Uses `:binary.decode_unsigned/1`
+
+  ## Examples
+
+      iex> <<1, 2>> |> Binary.to_integer
+      258
+      iex> <<1, 2>> |> Binary.to_integer(:little)
+      513
+
+  """
+  @spec to_integer(binary, :big | :little) :: non_neg_integer
+  def to_integer(binary, endianness \\ :big) when is_binary(binary) do
+    :binary.decode_unsigned(binary, endianness)
+  end
+
+  @doc """
+  Returns binary representation of the provided integer. Second option decides endianness which defaults to `:big`.
+
+  Uses `:binary.encode_unsigned/1`
+
+  ## Examples
+
+      iex> 1234 |> Binary.from_integer
+      <<4, 210>>
+      iex> 1234 |> Binary.from_integer(:little)
+      <<210, 4>>
+
+  """
+  @spec from_integer(non_neg_integer, :big | :little) :: binary
+  def from_integer(int, endianness \\ :big) when is_integer(int) and int >= 0 do
+    :binary.encode_unsigned(int, endianness)
+  end
 
 end

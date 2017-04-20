@@ -97,4 +97,41 @@ defmodule BinaryTest do
     assert <<>> |> pad_leading(1) == <<0>>
   end
 
+  test "replace" do
+    assert "hoothoot" |> replace("oo","a") == "hathat"
+    assert "hoothoot" |> replace("oo","a", global: false) == "hathoot"
+  end
+
+  test "longest_common_prefix" do
+    assert ["foo fighters", "foofoo"] |> longest_common_prefix == 3
+  end
+
+  test "longest_common_suffix" do
+    assert ["foo", "mooooo", "boo"] |> longest_common_suffix == 2
+  end
+
+  test "part" do
+     x = <<1, 2, 3, 4, 5>>
+     assert x |> part(1, 2) == <<2, 3>>
+     assert x |> part(-2, 1) == <<4>>
+     assert x |> part(-2, -1) == <<3>>
+     assert x |> part(-2, -3) == <<1, 2, 3>>
+     assert x |> part(3, 10) == <<4, 5>>
+     assert x |> part(3, -2) == <<2, 3>>
+     assert x |> part(3, -3) == <<1, 2, 3>>
+     assert x |> part(3, -4) == <<1, 2, 3>>
+  end
+
+  test "to_integer" do
+    assert <<17>> |> to_integer == 17
+    assert <<4, 210>> |> to_integer == 1234
+    assert <<210, 4>> |> to_integer(:little) == 1234
+  end
+
+  test "from_integer" do
+    assert 0 |> from_integer == <<0>>
+    assert 258 |> from_integer == <<1, 2>>
+    assert 258 |> from_integer(:little) == <<2, 1>>
+  end
+
 end

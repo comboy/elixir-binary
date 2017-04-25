@@ -73,6 +73,7 @@ defmodule BinaryTest do
     assert x |> split(3, global: true) == [<<1, 2>>, <<2, 4, 5>>, <<>>]
     assert x |> split(<<2, 3, 2>>) == [<<1>>, <<4, 5, 3>>]
     assert <<>> |> split(<<3>>) == [<<>>]
+    assert <<1, 0>> |> split(0) == [<<1>>, <<>>]
   end
 
   test "split_at" do
@@ -186,10 +187,12 @@ defmodule BinaryTest do
   test "append" do
     assert <<2, 3>> |> Binary.append(<<4>>) == <<2, 3, 4>>
     assert <<2, 3>> |> Binary.append(4) == <<2, 3, 4>>
+    assert <<>> |> Binary.append(0) == <<0>>
   end
 
   test "prepend" do
     assert <<2, 3>> |> Binary.prepend(<<1>>) == <<1, 2, 3>>
     assert <<2, 3>> |> Binary.prepend(1) == <<1, 2, 3>>
+    assert <<>> |> Binary.prepend(0) == <<0>>
   end
 end

@@ -109,7 +109,7 @@ defmodule Binary do
   @spec split(binary, binary | byte, Keyword.t) :: list(binary)
   def split(binary, pattern, opts \\ [])
 
-  def split(binary, byte, opts) when is_binary(binary) and is_integer(byte) and byte > 0 and byte < 256 do
+  def split(binary, byte, opts) when is_binary(binary) and is_integer(byte) and byte >= 0 and byte < 256 do
     split(binary, <<byte>>, opts)
   end
 
@@ -406,7 +406,7 @@ defmodule Binary do
   @spec append(binary, binary | byte) :: binary
   def append(left, right)
 
-  def append(left, right) when is_binary(left) and is_integer(right) and right > 0 and right < 256 do
+  def append(left, right) when is_binary(left) and is_integer(right) and right >= 0 and right < 256 do
     left <> <<right>>
   end
 
@@ -420,7 +420,7 @@ defmodule Binary do
   @spec prepend(binary, binary | byte) :: binary
   def prepend(left, right)
 
-  def prepend(left, right) when is_binary(left) and is_integer(right) and right > 0 and right < 256 do
+  def prepend(left, right) when is_binary(left) and is_integer(right) and right >= 0 and right < 256 do
     <<right>> <> left
   end
 

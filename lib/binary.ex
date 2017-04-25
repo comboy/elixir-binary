@@ -1,6 +1,10 @@
 defmodule Binary do
   @moduledoc """
   Functions to operate on binaries.
+
+  Wrappers of erlang's `:binary`, functions that try to mimic `String` behaviour
+  but on bytes, and some very simple functions that are here just to make
+  piping operations on binaries easier.
   """
 
   @doc """
@@ -82,6 +86,36 @@ defmodule Binary do
 
   def at(binary, position) when is_integer(position) do
     :binary.at(binary, position)
+  end
+
+  @doc """
+  Split binary into list of binaries based on `pattern`.
+
+  `pattern` can be a binary, or a byte.
+
+  It mimics erlang's `:binary.split/3`split behavior rather than `String.split/3`, and only
+  splits once by default.
+
+  `global: true` option can be provided to split on all occurences.
+
+      iex> <<1, 2, 3, 2, 3>> |> Binary.split(<<3, 2>>)
+      [<<1, 2>>, <<3>>]
+      iex> <<1, 2, 3, 2, 3>> |> Binary.split(2)
+      [<<1>>, <<3, 2, 3>>]
+      iex> <<1, 2, 3, 2, 3>> |> Binary.split(2, global: true)
+      [<<1>>, <<3>>, <<3>>]
+  """
+  # TODO maybe add parts: option, but I don't think it's practical for binaries
+  @spec split(binary, binary | byte, Keyword.t) :: list(binary)
+  def split(binary, pattern, opts \\ [])
+
+  def split(binary, byte, opts) when is_binary(binary) and is_integer(byte) and byte > 0 and byte < 256 do
+    split(binary, <<byte>>, opts)
+  end
+
+  def split(binary, pattern, opts) do
+    global = opts |> Keyword.get(:global, false)
+    :binary.split(binary, pattern, global && [:global] || [])
   end
 
   @doc """
@@ -329,4 +363,69 @@ defmodule Binary do
   def from_hex(binary) when is_binary(binary) do
     binary |> Base.decode16!(case: :mixed)
   end
+
+  @doc """
+  Takes the first N bytes from the binary.
+
+  When negative count is given, last N bytes are returned. In case when
+  count > byte_size, it will return the full binary.
+  """
+  @spec take(binary, integer) :: binary
+  def take(binary, count)
+
+  def take(binary, count) when is_binary(binary) and is_integer(count) and count < 0 do
+    binary |> split_at(count) |> elem(1)
+  end
+
+  def take(binary, count) when is_binary(binary) and is_integer(count) and count >= 0 do
+    binary |> split_at(count) |> elem(0)
+  end
+
+  @doc """
+  Drops first N bytes from the binary.
+
+  If provided count is negative, it drops N bytes from the end.
+  In case where count > byte_size, it will return `<<>>`
+  """
+  @spec drop(binary, integer) :: binary
+  def drop(binary, count)
+
+  def drop(binary, count) when is_binary(binary) and is_integer(count) and count < 0 do
+    binary |> split_at(count) |> elem(0)
+  end
+
+  def drop(binary, count) when is_binary(binary) and is_integer(count) and count >= 0 do
+    binary |> split_at(count) |> elem(1)
+  end
+
+  @doc """
+  Append binary or a byte to another binary.
+
+  Handy for pipping. With binary argument it's exactly the same as `Kernel.<>/2`
+  """
+  @spec append(binary, binary | byte) :: binary
+  def append(left, right)
+
+  def append(left, right) when is_binary(left) and is_integer(right) and right > 0 and right < 256 do
+    left <> <<right>>
+  end
+
+  def append(left, right) when is_binary(left) and is_binary(right) do
+    left <> right
+  end
+
+  @doc """
+  Prepend binary or a byte to another binary.
+  """
+  @spec prepend(binary, binary | byte) :: binary
+  def prepend(left, right)
+
+  def prepend(left, right) when is_binary(left) and is_integer(right) and right > 0 and right < 256 do
+    <<right>> <> left
+  end
+
+  def prepend(left, right) when is_binary(left) and is_binary(right) do
+    right <> left
+  end
+
 end

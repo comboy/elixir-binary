@@ -62,6 +62,19 @@ defmodule BinaryTest do
     assert <<1, 2, 3>> |> at(-4) == nil
   end
 
+  test "split" do
+    x = <<1, 2, 3, 2, 4, 5, 3>>
+    assert x |> split(<<2>>) == [<<1>>, <<3, 2, 4, 5, 3>>]
+    assert x |> split(2) == [<<1>>, <<3, 2, 4, 5, 3>>]
+    assert x |> split(<<2>>, global: true) == [<<1>>, <<3>>, <<4, 5, 3>>]
+    assert x |> split(2, global: true) == [<<1>>, <<3>>, <<4, 5, 3>>]
+    assert x |> split("foo") == [x]
+    assert x |> split(123) == [x]
+    assert x |> split(3, global: true) == [<<1, 2>>, <<2, 4, 5>>, <<>>]
+    assert x |> split(<<2, 3, 2>>) == [<<1>>, <<4, 5, 3>>]
+    assert <<>> |> split(<<3>>) == [<<>>]
+  end
+
   test "split_at" do
     assert <<1, 2, 3>> |> split_at(1) == {<<1>>, <<2, 3>>}
     assert <<1, 2, 3>> |> split_at(0) == {<<>>, <<1, 2, 3>>}
@@ -147,4 +160,36 @@ defmodule BinaryTest do
     assert "" |> from_hex == <<>>
   end
 
+  test "take" do
+    assert <<>>  |> take(1) == <<>>
+    assert <<1>> |> take(0) == <<>>
+    assert <<1, 2, 3, 4>> |> take(1) == <<1>>
+    assert <<1, 2, 3, 4>> |> take(2) == <<1, 2>>
+    assert <<1, 2, 3, 4>> |> take(5) == <<1, 2, 3, 4>>
+    assert <<1, 2, 3, 4>> |> take(-1) == <<4>>
+    assert <<1, 2, 3, 4>> |> take(-3) == <<2, 3, 4>>
+    assert <<1, 2, 3, 4>> |> take(-13) == <<1, 2, 3, 4>>
+    assert "Dave Brubeck" |> take(5) == "Dave "
+  end
+
+  test "drop" do
+    assert <<>>  |> drop(1) == <<>>
+    assert <<1>> |> drop(0) == <<1>>
+    assert <<1, 2, 3, 4>> |> drop(1) == <<2, 3, 4>>
+    assert <<1, 2, 3, 4>> |> drop(2) == <<3, 4>>
+    assert <<1, 2, 3, 4>> |> drop(5) == <<>>
+    assert <<1, 2, 3, 4>> |> drop(-1) == <<1, 2, 3>>
+    assert <<1, 2, 3, 4>> |> drop(-3) == <<1>>
+    assert <<1, 2, 3, 4>> |> drop(-13) == <<>>
+  end
+
+  test "append" do
+    assert <<2, 3>> |> Binary.append(<<4>>) == <<2, 3, 4>>
+    assert <<2, 3>> |> Binary.append(4) == <<2, 3, 4>>
+  end
+
+  test "prepend" do
+    assert <<2, 3>> |> Binary.prepend(<<1>>) == <<1, 2, 3>>
+    assert <<2, 3>> |> Binary.prepend(1) == <<1, 2, 3>>
+  end
 end

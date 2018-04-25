@@ -121,7 +121,7 @@ defmodule Binary do
   @doc """
   Splits a binary into two at the specified position. Returns a tuple.
 
-  When position is negative it's counted from the end of the binary.
+  When position is negative it is counted from the end of the binary.
 
   ## Examples
 
@@ -132,7 +132,7 @@ defmodule Binary do
       iex> <<1, 2, 3>> |> Binary.split_at(10)
       {<<1, 2, 3>>, <<>>}
   """
-  @spec split_at(binary, integer) :: byte
+  @spec split_at(binary, integer) :: { binary, binary }
   def split_at(binary, position)
 
   def split_at(binary, position) when is_binary(binary) and is_integer(position) and position >= byte_size(binary), do: { binary, <<>> }
@@ -148,7 +148,7 @@ defmodule Binary do
   end
 
   @doc """
-  Removes all specified trailing bytes from the the binary.
+  Removes all specified trailing bytes from the binary.
 
   ## Examples
 
@@ -200,7 +200,7 @@ defmodule Binary do
   @spec pad_leading(binary, non_neg_integer, byte) :: binary
   def pad_leading(binary, len, byte \\ 0)
 
-  # Return binary if it's already long enough
+  # Return binary if it is already long enough
   def pad_leading(binary, len, byte) when is_binary(binary) and is_integer(len) and is_integer(byte) and len > 0
                                            and byte_size(binary) >= len, do: binary
   def pad_leading(binary, len, byte) when is_binary(binary) and is_integer(len) and is_integer(byte) and len > 0 do
@@ -210,12 +210,12 @@ defmodule Binary do
   @doc """
   Replace binary pattern inside the binary with the replacement.
 
-  For readability examples are presented on strings, but do note we are operating on bytes, not codepoints.
+  For readability, examples are presented on strings, but do note we are operating on bytes, not codepoints.
 
       iex> "a-b-c" |> Binary.replace("-", "..")
       "a..b..c"
 
-  By default it replaces all occurrences. If you only want to replace the first occurence,
+  By default it replaces all occurrences. If you only want to replace the first occurence, set `global: false`
 
       iex> "a-b-c" |> Binary.replace("-", "..", global: false)
       "a..b-c"
@@ -254,7 +254,7 @@ defmodule Binary do
   end
 
   @doc """
-  Exctracts part of the binarty starting at given position with given length.
+  Exctracts part of the binary starting at given position with given length.
 
   Based on `Kernel.binary_part/3`, but:
 
@@ -401,7 +401,7 @@ defmodule Binary do
   @doc """
   Append binary or a byte to another binary.
 
-  Handy for pipping. With binary argument it's exactly the same as `Kernel.<>/2`
+  Handy for piping. With binary argument it's exactly the same as `Kernel.<>/2`
   """
   @spec append(binary, binary | byte) :: binary
   def append(left, right)

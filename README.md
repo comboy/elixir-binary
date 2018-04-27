@@ -7,7 +7,7 @@ like `reverse/1`, `trim_trailing/2` etc. You should not use String for binaries 
 
 Full list of functions can be found on [hexdocs](https://hexdocs.pm/binary/Binary.html)
 
-In edge cases, the behavior is modeled after Elixir.String. API will be frozen with version 0.1.0. I'm hoping to collect some
+In edge cases, the behavior is modeled after `Elixir.String`. API will be frozen with version 0.1.0. I'm hoping to collect some
 feedback first, but I don't plan any breaking API changes.
 
 ## Usage
@@ -33,5 +33,5 @@ MIT, check the [LICENSE](LICENSE) file. Just do whatever you like with this.
 
 ## Contributing
 
-Even tiny contributios are very much welcome. Just open an issue or pull request on [github](https://github.com/comboy/elixir-binary).
+Even tiny contributions are very much welcome. Just open an issue or pull request on [github](https://github.com/comboy/elixir-binary).
 

@@ -17,18 +17,18 @@ defmodule Binary.Queue do
     %__MODULE__{}
   end
 
-  @spec push(binary, t) :: t
-  def push(data, queue) do
+  @spec push(t, binary) :: t
+  def push(queue, data) do
     %__MODULE__{size: queue.size + byte_size(data), data: :queue.in(data, queue.data)}
   end
 
   @spec pull(t) :: {binary, t}
   def pull(queue) do
-    pull(1, queue)
+    pull(queue, 1)
   end
 
-  @spec pull(non_neg_integer, t) :: {binary, t}
-  def pull(amount, queue) do
+  @spec pull(t, non_neg_integer) :: {binary, t}
+  def pull(queue, amount) do
     pull(<<>>, amount, queue.size, queue.data)
   end
 

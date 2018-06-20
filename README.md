@@ -16,7 +16,7 @@ Add dependency in your mix.exs:
 
 ```elixir
 def deps do
-  [{:binary, "~> 0.0.4"}]
+  [{:binary, "~> 0.0.5"}]
 end
 ```
 
